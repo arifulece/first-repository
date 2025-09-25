@@ -1,0 +1,14 @@
+#cd /etc/yum.repos.d/				[mysql download location]
+#wget https://dev.mysql.com/get/mysql84-community-release-el9-2.noarch.rpm
+#yum localinstall mysql84-community-release-el9-2.noarch.rpm
+#vim mysql-community.repo			[mysql server 180 version enabled=1]
+#yum repolist					[if required]
+#yum install mysql-community-server
+#systemctl start mysqld
+#systemctl enable mysqld
+#systemctl status mysqld
+#mysql -V					[version check]
+#grep "A temporary password" /var/log/mysqld.log | tail -1	[for use temp password]
+#mysql_secure_installation
+#mysql -u root -p
+
