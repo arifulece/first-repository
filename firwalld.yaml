@@ -1,0 +1,12 @@
+---
+- name: Allow HTTPS through Firewall
+  hosts: appdb
+  become: yes
+  tasks:
+    - name: Permit traffic in default zone for https service
+      firewalld:
+        service: https,http
+        permanent: yes
+        state: enabled
+        immediate: yes
+...

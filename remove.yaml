@@ -1,0 +1,11 @@
+---
+- name: Remove unwanted file
+  hosts: appdb
+  become: yes
+
+  tasks:
+    - name: Delete index.html from remote server
+      file:
+        path: /var/www/html/index.html
+        state: absent
+...

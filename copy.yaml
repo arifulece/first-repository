@@ -1,0 +1,14 @@
+---
+- name: Copy file to remote servers
+  hosts: appdb
+  become: yes
+
+  tasks:
+    - name: Copy index.html to remote /var/www/html/
+      copy:
+        src: /home/automation/ansible/index.html   # local file path (controller machine)
+        dest: /var/www/html/index.html     # remote server path
+        owner: root
+        group: root
+        mode: '0644'
+...

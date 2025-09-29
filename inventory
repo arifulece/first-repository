@@ -1,0 +1,9 @@
+[db]
+sysadmin
+
+[app]
+appnode1
+
+[appdb:children]
+db
+app

@@ -1,0 +1,14 @@
+---
+- name: Copy full directory to remote servers
+  hosts: db
+  become: yes
+
+  tasks:
+    - name: Copy ansible folder to remote
+      copy:
+        src: /home/automation/ansible/
+        dest: /root/push_code_git/
+        owner: root
+        group: root
+        mode: '0644'
+...

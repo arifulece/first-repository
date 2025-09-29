@@ -1,0 +1,17 @@
+---
+- name: Apache Web Server Installation
+  hosts: appdb
+  become: yes
+  tasks: 
+   - name: Install Apache
+     yum: 
+       name: httpd
+       state: latest
+   - name: Permit traffic in default zone for https service
+     firewalld:
+       service: https
+       permanent: yes
+       state: enabled
+       immediate: yes
+
+...
