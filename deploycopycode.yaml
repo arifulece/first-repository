@@ -1,0 +1,11 @@
+---
+- name: Deploy static website
+  hosts: all
+  become: true
+  tasks:
+    - name: Copy website files
+      copy:
+        src: /var/lib/jenkins/workspace/pull-static-webserver/catalog/
+        dest: /var/www/html/
+...
+
