@@ -1,11 +1,11 @@
 ---
 - name: Deploy static website
-  hosts: all
+  hosts: appdb
   become: true
   tasks:
     - name: Copy website files
       copy:
-        src: /var/lib/jenkins/workspace/pull-static-webserver/catalog/
+        src: /var/lib/jenkins/workspace/job1-pull-staticwebsite-catalog/catalog/
         dest: /var/www/html/
 ...
 
