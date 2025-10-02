@@ -5,7 +5,7 @@
   tasks:
     - name: Copy website files
       copy:
-        src: /var/lib/jenkins//var/lib/jenkins/workspace/job1-pull-clothingwebsite/
+        src: /var/lib/jenkins/workspace/job1-pull-clothingwebsite/
         dest: /var/www/html/
 ...
 
