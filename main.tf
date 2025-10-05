@@ -24,6 +24,10 @@ resource "docker_container" "nginx" {
     internal = 80
     external = 8081
   }
+ volumes {
+    host_path      = "/root/nginx_site/clothing/"
+    container_path = "/usr/share/nginx/html"
+  }
 }
 
 # APACHE Image & Container
@@ -39,5 +43,9 @@ resource "docker_container" "apache" {
   ports {
     internal = 80
     external = 8082
+  }
+ volumes {
+    host_path      = "/root/nginx_site/catalog/"
+    container_path = "/usr/local/apache2/htdocs"
   }
 }
