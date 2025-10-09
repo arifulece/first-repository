@@ -1,0 +1,107 @@
+Topic: Network Monitoring Server Installation (Zabbix)
+
+First Install Apache server
+#yum install httpd -y
+#systemctl enable httpd 
+#systemctl start httpd 
+
+Second: Install MySQL/MariaDB
+dnf install mariadb-server -y
+systemctl enable --now mariadb
+mysql_secure_installation
+
+Third: Install PHP and Required Extensions
+dnf install php php-mysqlnd php-gd php-xml php-bcmath php-mbstring php-ldap php-json php-fpm php-zip -y
+
+Step 1: Install Zabbix repository
+#excludepkgs=zabbix*
+# rpm -Uvh https://repo.zabbix.com/zabbix/7.4/release/centos/9/noarch/zabbix-release-latest-7.4.el9.noarch.rpm
+# dnf clean all
+
+Step 2: Install Zabbix server, frontend, agent
+# dnf install zabbix-server-mysql zabbix-web-mysql zabbix-apache-conf zabbix-sql-scripts zabbix-selinux-policy zabbix-agent
+
+step 3: Create initial database
+# mysql -uroot -p
+password
+mysql> create database zabbix character set utf8mb4 collate utf8mb4_bin;
+mysql> create user zabbix@localhost identified by 'password';
+mysql> grant all privileges on zabbix.* to zabbix@localhost;
+mysql> set global log_bin_trust_function_creators = 1;
+mysql> quit;
+
+Step 4: On the Zabbix server host import initial schema and data
+# zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -uzabbix -p zabbix
+Disable log_bin_trust_function_creators option after importing database schema.
+# mysql -uroot -p
+password
+mysql> set global log_bin_trust_function_creators = 0;
+mysql> quit;
+
+Step 5: Configure the database for Zabbix server
+Edit file /etc/zabbix/zabbix_server.conf
+DBPassword=password
+
+Step 6: Start Zabbix server and agent processes
+# systemctl restart zabbix-server zabbix-agent httpd php-fpm
+# systemctl enable zabbix-server zabbix-agent httpd php-fpm
+
+Browser Web: http://192.168.18.62/zabbix
+step 1: stop zabbix
+# Stop Zabbix server, agent, and frontend (if running)
+systemctl stop zabbix-server
+systemctl stop zabbix-agent
+systemctl stop httpd    # if using Apache for frontend
+systemctl stop nginx    # if using Nginx for frontend
+
+step 2: Disable Zabbix Service
+systemctl disable zabbix-server
+systemctl disable zabbix-agent
+systemctl disable httpd
+systemctl disable nginx
+
+step 3: Remove zabbix package
+yum remove zabbix-server-mysql zabbix-agent zabbix-web-mysql -y
+
+step 4: Delete all monitoring data 
+# Login to MySQL/MariaDB
+mysql -u root -p
+
+# Drop Zabbix database
+DROP DATABASE zabbix;
+
+# Drop Zabbix user
+DROP USER 'zabbix'@'localhost';
+
+FLUSH PRIVILEGES;
+EXIT;
+
+step 5: Remove Zabbix Configuration Files
+rm -rf /etc/zabbix
+rm -rf /usr/share/zabbix
+rm -rf /var/log/zabbix
+rm -rf /var/lib/zabbix
+
+step 6: remove web frontend
+# Apache
+rm -rf /var/www/html/zabbix
+# Nginx
+rm -rf /usr/share/nginx/html/zabbix
+step 7: Verify removal
+rpm -qa | grep zabbix
+systemctl status zabbix-server
+
+rpm -qa | grep zabbix
+
+Friewall port open
+sudo firewall-cmd --permanent --add-port=80/tcp
+sudo firewall-cmd --permanent --add-port=10051/tcp
+sudo firewall-cmd --reload
+
+dnf remove zabbix* -y
+dnf clean all
+rm -rf /var/cache/dnf
+dnf config-manager --set-disabled epel
+systemctl status zabbix-server -l
+zabbix_server -V
+
